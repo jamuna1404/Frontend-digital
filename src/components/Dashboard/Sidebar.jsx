@@ -1,0 +1,136 @@
+import React, { useState } from "react";
+import {
+  Drawer, List, ListItem, ListItemIcon, ListItemText,
+  Avatar, Divider, Box, Button, IconButton, Typography, Tooltip
+} from "@mui/material";
+import { styled } from "@mui/system";
+import { Link } from "react-router-dom";
+
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import PersonIcon from "@mui/icons-material/Person";
+import SchoolIcon from "@mui/icons-material/School";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import DescriptionIcon from "@mui/icons-material/Description";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+const drawerWidth = 240;
+const collapsedWidth = 70;
+
+const StyledDrawer = styled(Drawer)(({ open }) => ({
+  "& .MuiDrawer-paper": {
+    width: open ? drawerWidth : collapsedWidth,
+    backgroundColor: "#8B5D3B", // Darker brown shade
+    color: "white",
+    borderRight: "2px solid rgba(255, 255, 255, 0.1)",
+    transition: "width 0.3s ease-in-out",
+    overflowX: "hidden",
+  },
+}));
+
+
+const Sidebar = () => {
+  const [open, setOpen] = useState(true);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
+  const menuItems = [
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/dashboard" },
+    { text: "Vision Mission", icon: <AssignmentIcon />, path: "/dashboard/VisionMission" },
+    { text: "PO", icon: <PersonIcon />, path: "/dashboard/POs" },
+    { text: "PSO", icon: <SchoolIcon />, path: "/dashboard/PSOs" },
+    { text: "CO", icon: <FormatListNumberedIcon />, path: "/dashboard/COs" },
+    { text: "Attendance", icon: <AssessmentIcon />, path: "/dashboard/Attendance" },
+    { text: "Assessment Methods", icon: <AssessmentIcon />, path: "/dashboard/AssessmentMethods" },
+    { text: "Grade Distribution", icon: <AssessmentIcon />, path: "/dashboard/GradeDistribution" },
+    { text: "Lecture Tracking", icon: <DescriptionIcon />, path: "/dashboard/LectureTracking" },
+    { text: "PDF Generator", icon: <PictureAsPdfIcon />, path: "/dashboard/PDFGeneration" },
+  ];
+
+  return (
+    <>
+      <IconButton
+        onClick={toggleDrawer}
+        sx={{
+          position: "fixed",
+          top: 15,
+          left: 15,
+          zIndex: 1300,
+          backgroundColor: "#111",
+          color: "white",
+          transition: "0.3s ease-in-out",
+          "&:hover": { color: "#00bfff", boxShadow: "0px 0px 8px #00bfff" },
+        }}
+      >
+        {open ? <CloseIcon /> : <MenuIcon />}
+      </IconButton>
+
+      <StyledDrawer variant="permanent" open={open}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 2, mt: 5 }}>
+          <Avatar sx={{ width: open ? 64 : 40, height: open ? 64 : 40, bgcolor: "#222" }}>
+            <AccountCircleIcon sx={{ width: "100%", height: "100%" }} />
+          </Avatar>
+          {open && (
+            <Typography variant="h6" sx={{ mt: 1, color: "white" }}>
+              Staff
+            </Typography>
+          )}
+        </Box>
+
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }} />
+
+        <List sx={{ mt: 1 }}>
+          {menuItems.map(({ text, icon, path }) => (
+            <Tooltip title={!open ? text : ""} placement="right" key={text}>
+              <ListItem
+                button
+                component={Link}
+                to={path}
+                sx={{
+                  backgroundColor: "transparent",
+                  transition: "0.3s ease-in-out",
+                  "&:hover": { backgroundColor: "#111", boxShadow: "0px 0px 8px #00bfff" },
+                }}
+              >
+                <ListItemIcon sx={{ color: "white", transition: "0.3s", "&:hover": { color: "#00bfff" } }}>
+                  {icon}
+                </ListItemIcon>
+                {open && (
+                  <ListItemText primary={text} sx={{ "& .MuiTypography-root": { color: "white" } }} />
+                )}
+              </ListItem>
+            </Tooltip>
+          ))}
+        </List>
+
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }} />
+
+        <Box sx={{ p: 2, textAlign: "center" }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#222",
+              color: "white",
+              fontWeight: "bold",
+              transition: "0.3s ease-in-out",
+              width: open ? "100%" : "auto",
+              "&:hover": { backgroundColor: "#00bfff", boxShadow: "0px 0px 8px #00bfff" },
+            }}
+            startIcon={<ExitToAppIcon />}
+          >
+            {open ? "Logout" : ""}
+          </Button>
+        </Box>
+      </StyledDrawer>
+    </>
+  );
+};
+
+export default Sidebar;
