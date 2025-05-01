@@ -60,13 +60,13 @@ const POs = () => {
         variant="outlined"
         size="small"
         sx={{
-          backgroundColor: "#222",
+          backgroundColor: "#0f0f1a",
           borderRadius: "5px",
           marginBottom: 2,
           color: "white",
           input: { color: "white" },
           "& .MuiOutlinedInput-root": {
-            "& fieldset": { borderColor: "gray" },
+            "& fieldset": { borderColor: "white" },
             "&:hover fieldset": { borderColor: "#00bfff" },
           },
         }}
@@ -81,7 +81,7 @@ const POs = () => {
           width: "90%",
           maxHeight: "70vh",
           boxShadow: "0px 0px 8px rgba(0, 191, 255, 0.8)",
-          backgroundColor: "#111",
+          backgroundColor: "#0f0f1a",
         }}
       >
         <Table sx={{ width: "100%" }}>
@@ -130,13 +130,11 @@ const POs = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => deleteRow(row.id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton onClick={addRow} color="primary">
-                    <AddCircleIcon />
-                  </IconButton>
-                </TableCell>
+  <IconButton onClick={addRow} color="primary">
+    <AddCircleIcon />
+  </IconButton>
+</TableCell>
+
               </TableRow>
             ))}
           </TableBody>

@@ -1,118 +1,122 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import styled, { createGlobalStyle } from "styled-components";
+import { useNavigate } from "react-router-dom";
 
+// Global styles
+const GlobalStyle = createGlobalStyle`
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+  }
+`;
+
+// Main container with background image
 const Container = styled.div`
+  position: relative;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%; width: 100%;
+    background-image: url('/staffl.jpeg'); /* Ensure correct path */
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px) brightness(0.7); /* Reduced blur here */
+    z-index: 0;
+  }
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url("/staffl.jpeg") no-repeat center center/cover;
-  position: relative;
-  background-size: cover; /* Make sure the background covers the entire screen */
 `;
 
-const AdminButton = styled(Link)`
+
+// Admin button
+const AdminButton = styled.button`
   position: absolute;
   top: 20px;
-  right: 20px;
-  background: #ff9800;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 0.9rem;
+  right: 30px;
+  padding: 8px 16px;
+  background-color: #fff;
+  color: #333;
+  border: none;
+  border-radius: 8px;
   font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-  &:hover {
-    background: #e68900;
-  }
+  cursor: pointer;
+  z-index: 2;
 `;
 
-const Overlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-`;
-
+// Login card
 const LoginCard = styled.div`
-  position: relative;
-  background: rgba(245, 247, 248, 0.45);
-  padding: 2rem;
-  border-radius: 10px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   text-align: center;
-  width: 300px;
+  color: #fff;
   z-index: 1;
 `;
 
+// Input
 const Input = styled.input`
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 14px;
+  margin: 12px 0;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 1rem;
 `;
 
+// Button
+const LoginButton = styled.button`
+  width: 100%;
+  padding: 14px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 12px;
+
+  &:hover {
+    background: #333;
+  }
+`;
+
+// Error message
 const ErrorMessage = styled.p`
-  color: red;
-  font-size: 0.8rem;
+  color: #ffdddd;
+  font-size: 0.9rem;
   margin: 5px 0;
 `;
 
-const LoginButton = styled.button`
-  width: 100%;
-  padding: 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s;
-  &:hover {
-    background: #0056b3;
-  }
-`;
-
-const Links = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-`;
-
-const StyledLink = styled(Link)`
-  color: black;
-  font-size: 0.9rem;
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
+// Success popup
 const SuccessPopup = styled.div`
   position: fixed;
-  top: 15%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #28a745;
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   opacity: ${(props) => (props.show ? 1 : 0)};
   transition: opacity 0.5s ease-in-out;
-  margin-bottom: 20px;
+  z-index: 2;
 `;
 
 const StaffLogin = () => {
@@ -120,59 +124,57 @@ const StaffLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-  const navigate = useNavigate(); // Use navigate for redirection
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-
-    // Example password validation, modify according to your needs
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
-
     setError("");
     setShowSuccess(true);
-
-    // Redirect to dashboard after success
     setTimeout(() => {
       setShowSuccess(false);
-      navigate("/dashboard/Sidebar"); // ✅ this is a valid dashboard route
-      // Navigate to staff dashboard
-    }, 2000); // Delay to show success message
+      navigate("/dashboard/Sidebar");
+    }, 2000);
   };
 
   return (
-    <Container>
-      <Overlay />
-      <AdminButton to="/adminlogin">Admin Login</AdminButton>
-      <LoginCard>
-        <h2>Staff Login</h2>
-        <form onSubmit={handleLogin}>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-          <Links>
-            <StyledLink to="/Forgot_password">Forgot Password?</StyledLink>
-          </Links>
-        
-          <LoginButton type="submit">Login</LoginButton> {/* Submit form to trigger handleLogin */}
-        </form>
-      </LoginCard>
-      {showSuccess && <SuccessPopup show={showSuccess}>✅ Successfully Logged In</SuccessPopup>}
-    </Container>
+    <>
+      <GlobalStyle />
+      <Container>
+        <AdminButton onClick={() => navigate("/adminlogin")}>
+          Admin
+        </AdminButton>
+        <LoginCard>
+          <h2>Staff Login</h2>
+          <form onSubmit={handleLogin}>
+            <Input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+            <LoginButton type="submit">Login</LoginButton>
+          </form>
+        </LoginCard>
+        {showSuccess && (
+          <SuccessPopup show={showSuccess}>
+            ✅ Successfully Logged In
+          </SuccessPopup>
+        )}
+      </Container>
+    </>
   );
 };
 

@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import AttendanceMarking from "./AttendanceMarking";
+import { Outlet } from "react-router-dom"; // 👈 Import Outlet
 
 const Dashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true); // ✅ Sidebar state added
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div style={{ display: "flex" }}>
-      {/* Sidebar with props */}
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> 
-
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      
       <div
         style={{
           flexGrow: 1,
@@ -18,7 +17,7 @@ const Dashboard = () => {
           padding: "20px",
         }}
       >
-        <AttendanceMarking />
+        <Outlet /> {/* 👈 This will dynamically render child routes inside Dashboard */}
       </div>
     </div>
   );

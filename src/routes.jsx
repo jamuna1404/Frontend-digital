@@ -4,6 +4,7 @@ import StaffLogin from "./components/stafflogin";
 import AdminLogin from "./components/adminlogin";
 import ForgotPassword from "./components/Forgot_password";
 
+import Dashboard from "./components/Dashboard/dashboard";
 import VisionMission from "./components/Dashboard/VisionMission";
 import POPage from "./components/Dashboard/POs";
 import PSOPage from "./components/Dashboard/PSOs";

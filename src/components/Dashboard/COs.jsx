@@ -85,7 +85,7 @@ const CourseOutcomes = () => {
         variant="outlined"
         size="small"
         sx={{
-          backgroundColor: "#222",
+          backgroundColor: "#4F5B67",
           borderRadius: "5px",
           marginBottom: 2,
           color: "white",
@@ -105,8 +105,8 @@ const CourseOutcomes = () => {
         sx={{
           width: "90%",
           maxHeight: "70vh",
-          boxShadow: "0px 0px 8px rgba(0, 191, 255, 0.8)",
-          backgroundColor: "#111",
+          boxShadow: "0px 0px 8px rgba(2, 3, 3, 0.8)",
+          backgroundColor: "#222232",
         }}
       >
         <Table sx={{ width: "100%" }}>
@@ -163,7 +163,7 @@ const CourseOutcomes = () => {
                       input: { color: "white" },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": { borderColor: "gray" },
-                        "&:hover fieldset": { borderColor: "#00bfff" },
+                        "&:hover fieldset": { borderColor: "#4f3b31" },
                       },
                     }}
                     value={row.coNumber}
@@ -209,13 +209,11 @@ const CourseOutcomes = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => deleteRow(row.id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton onClick={addRow} color="primary">
-                    <AddCircleIcon />
-                  </IconButton>
-                </TableCell>
+  <IconButton onClick={addRow} color="primary">
+    <AddCircleIcon />
+  </IconButton>
+</TableCell>
+
               </TableRow>
             ))}
           </TableBody>

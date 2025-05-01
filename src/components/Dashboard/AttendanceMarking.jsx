@@ -19,67 +19,81 @@ import {
 import { styled } from "@mui/system";
 
 // Styled Components
+const StyledMainContainer = styled(Container)(({ theme }) => ({
+  display: "flex", // Flex container for centering
+  justifyContent: "center", // Center horizontally
+  alignItems: "center", // Center vertically
+  minHeight: "100vh", // Full screen height
+  padding: 0, // Remove padding around the main container
+}));
+
 const StyledContainer = styled(Container, {
   shouldForwardProp: (prop) => prop !== "sidebarOpen",
 })(({ sidebarOpen }) => ({
-  background: "linear-gradient(135deg, #0f0f0f, #1a1a1a)",
-  color: "white",
+  background: "linear-gradient(135deg, #222232, #1a1a2e)", // Darker background for consistency
+  color: "white", // Text color changed to white for contrast
   padding: "20px",
   marginTop: "20px",
   textAlign: "center",
   borderRadius: "15px",
-  boxShadow: "0 4px 30px rgba(255, 255, 255, 0.25)",
-  backdropFilter: "blur(10px)",
+  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)", // Subtle shadow effect
   transition: "margin-left 0.3s ease-in-out",
   marginLeft: sidebarOpen ? "240px" : "0px",
   width: `calc(100% - ${sidebarOpen ? "240px" : "0px"})`,
+  maxWidth: "800px", // Limit width for better alignment
   [`@media (max-width: 768px)`]: {
     marginLeft: "0px",
     width: "100%",
   },
 }));
 
-
 const StyledButton = styled(Button)({
   transition: "0.3s",
-  color: "white",
+  color: "white", // Set text color to white
+  backgroundColor: "#00bfff", // Blue theme to match CO section
+  margin: "10px", // Add space between buttons
   "&:hover": {
-    boxShadow: "0px 0px 15px #00eaff",
+    backgroundColor: "#007bff", // Adjusted hover effect
   },
 });
 
 const StyledTableCell = styled(TableCell)({
-  backgroundColor: "#333",
-  color: "white",
+  backgroundColor: "#222232", // Matching table background color
+  color: "white", // Text color changed to white
   fontWeight: "bold",
   cursor: "pointer",
+  padding: "8px",
 });
 
-// Styled input fields
-const StyledTextField = styled(TextField)({
-  backgroundColor: "#222",
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  backgroundColor: "#333344", // Slightly darker background for text input
   borderRadius: "5px",
   "& label": {
-    color: "white",
+    color: "white", // Label color changed to white for contrast
   },
   "& input": {
-    color: "white",
+    color: "white", // Changed input text color to white for branch input
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "white",
+      borderColor: "#00bfff", // Border color adjusted to match the theme
     },
     "&:hover fieldset": {
-      borderColor: "#00eaff",
+      borderColor: "#007bff", // Hover border color adjustment
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#00eaff",
+      borderColor: "#007bff", // Focused border color for better interaction
     },
     "& svg": {
       color: "white", // Icon color changed to white
     },
   },
-});
+  "& .MuiMenuItem-root": {
+    backgroundColor: (props) =>
+      props.selected ? "#007bff" : "", // Highlight the selected branch with blue color
+    color: (props) => (props.selected ? "white" : ""), // Change text color of the selected item
+  },
+}));
 
 // Attendance Component
 const AttendanceMarking = ({ sidebarOpen }) => {
@@ -90,7 +104,6 @@ const AttendanceMarking = ({ sidebarOpen }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
     if (selectedBranch) {
@@ -111,18 +124,9 @@ const AttendanceMarking = ({ sidebarOpen }) => {
 
   // Toggle Attendance Status
   const toggleAttendance = (studentId) => {
-    setStudents(students.map((student) => 
+    setStudents(students.map((student) =>
       student.id === studentId ? { ...student, present: !student.present } : student
     ));
-  };
-
-  // Mark All
-  const markAllPresent = () => {
-    setStudents(students.map((student) => ({ ...student, present: true })));
-  };
-
-  const markAllAbsent = () => {
-    setStudents(students.map((student) => ({ ...student, present: false })));
   };
 
   // Save Attendance
@@ -133,191 +137,117 @@ const AttendanceMarking = ({ sidebarOpen }) => {
     setOpenSnackbar(true);
   };
 
-  // Sorting Logic
-  const sortData = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    const sortedStudents = [...students].sort((a, b) => {
-      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
-      return 0;
-    });
-    setStudents(sortedStudents);
-    setSortConfig({ key, direction });
-  };
   // Calculate attendance stats
-const totalStudents = students.length;
-const presentCount = students.filter(student => student.present).length;
-const absentCount = totalStudents - presentCount;
+  const totalStudents = students.length;
+  const presentCount = students.filter(student => student.present).length;
+  const absentCount = totalStudents - presentCount;
 
   return (
-    <StyledContainer maxWidth="md" sidebarOpen={sidebarOpen}>
+    <StyledMainContainer maxWidth="md">
+      <StyledContainer maxWidth="md" sidebarOpen={sidebarOpen}>
+        <div style={{ width: "100%" }}>
+          <Typography variant="h4" gutterBottom sx={{ color: "white" }}>
+            Mark Student Attendance
+          </Typography>
 
-      <Typography variant="h4" gutterBottom>
-        Mark Student Attendance
-      </Typography>
-      
-      {/* Branch Dropdown - Shadow Effect Added */}
-      <StyledTextField
-        select
-        label="Branch"
-        value={selectedBranch}
-        onChange={(e) => setSelectedBranch(e.target.value)}
-        fullWidth
-        margin="normal"
-        variant="outlined"
-        sx={{
-  "& .MuiOutlinedInput-root": {
-    color: "white", // Ensures selected text color is white
-    boxShadow: "0px 0px 10px rgba(0, 234, 255, 0.5)", // Neon glowing shadow effect
-    "& fieldset": {
-      borderColor: "white", // Default border color
-    },
-    "&:hover fieldset": {
-      borderColor: "#00eaff",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#00eaff",
-    },
-  },
-  "& .MuiSelect-select": {
-    color: "white", // Ensures selected option text remains white
-  },
-}}
-
-      >
-        {branches.map((branch) => (
-          <MenuItem 
-            key={branch} 
-            value={branch} 
-            sx={{
-              color: "white", 
-              backgroundColor: "#222",
-              transition: "0.3s",
-              "&:hover": {
-                backgroundColor: "#00eaff", 
-                color: "black",
-                boxShadow: "0px 0px 15px #00eaff", // Glow effect on hover
-              },
-            }}
+          {/* Branch Dropdown */}
+          <StyledTextField
+            select
+            label="Branch"
+            value={selectedBranch}
+            onChange={(e) => setSelectedBranch(e.target.value)}
+            fullWidth
+            margin="normal"
+            variant="outlined"
           >
-            {branch}
-          </MenuItem>
-        ))}
-      </StyledTextField>
+            {branches.map((branch) => (
+              <MenuItem key={branch} value={branch}>
+                {branch}
+              </MenuItem>
+            ))}
+          </StyledTextField>
 
-      {/* Date Picker - Text & Icon Color Changed to White */}
-      <StyledTextField
-  label="Date"
-  type="date"
-  value={selectedDate}
-  onChange={(e) => setSelectedDate(e.target.value)}
-  fullWidth
-  margin="normal"
-  InputLabelProps={{ shrink: true }}
-  sx={{
-    "& .MuiInputBase-root": {
-      color: "white", // Ensures input text is white
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "white",
-      },
-      "&:hover fieldset": {
-        borderColor: "#00eaff",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "#00eaff",
-      },
-    },
-    "& input": {
-      color: "white", // Ensures the selected date is white
-    },
-    "& input[type=date]::-webkit-calendar-picker-indicator": {
-      filter: "invert(1)", // Inverts the default black icon to white
-      cursor: "pointer",
-    },
-  }}
-/>
+          {/* Date Picker */}
+          <StyledTextField
+            label="Date"
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            fullWidth
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+          />
 
+          {students.length > 0 && (
+            <div>
+              <StyledButton variant="contained" color="success" onClick={() => setStudents(students.map((student) => ({ ...student, present: true })))} >
+                Mark All Present
+              </StyledButton>
+              <StyledButton variant="contained" color="error" onClick={() => setStudents(students.map((student) => ({ ...student, present: false })))} >
+                Mark All Absent
+              </StyledButton>
+              <StyledButton variant="contained" color="primary" onClick={saveAttendance}>
+                Save Attendance
+              </StyledButton>
+            </div>
+          )}
 
+          {/* Display Attendance Stats */}
+          {students.length > 0 && (
+            <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "15px" }}>
+              <Typography variant="h6" sx={{ color: "white" }}>
+                Total Students: {totalStudents}
+              </Typography>
+              <Typography variant="h6" sx={{ color: "green" }}>
+                Present: {presentCount}
+              </Typography>
+              <Typography variant="h6" sx={{ color: "red" }}>
+                Absent: {absentCount}
+              </Typography>
+            </div>
+          )}
 
+          {isLoading ? (
+            <CircularProgress />
+          ) : selectedBranch ? (
+            <TableContainer component={Paper} sx={{ marginTop: "20px", backgroundColor: "#333344" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>ID</StyledTableCell>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell align="center">Status</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {students.map((student) => (
+                    <TableRow key={student.id}>
+                      <TableCell sx={{ color: "white" }}>{student.id}</TableCell>
+                      <TableCell sx={{ color: "white" }}>{student.name}</TableCell>
+                      <TableCell align="center">
+                        <StyledButton
+                          variant="contained"
+                          color={student.present ? "success" : "error"}
+                          onClick={() => toggleAttendance(student.id)}
+                        >
+                          {student.present ? "Present" : "Absent"}
+                        </StyledButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography sx={{ color: "white" }}>Please select a branch to view students.</Typography>
+          )}
 
-      {students.length > 0 && (
-        <div>
-          <StyledButton variant="contained" color="success" onClick={markAllPresent} sx={{ marginRight: "10px" }}>
-            Mark All Present
-          </StyledButton>
-          <StyledButton variant="contained" color="error" onClick={markAllAbsent}>
-            Mark All Absent
-          </StyledButton>
-          {/* Save Attendance Button */}
-          <StyledButton 
-            variant="contained" 
-            color="primary" 
-            onClick={saveAttendance} 
-            sx={{ marginLeft: "10px", backgroundColor: "#00eaff", color: "black" }}
-          >
-            Save Attendance
-          </StyledButton>
+          <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={() => setOpenSnackbar(false)}>
+            <Alert severity={message.type}>{message.text}</Alert>
+          </Snackbar>
         </div>
-      )}
-    {/* Display Attendance Stats */}
-{students.length > 0 && (
-  <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "15px" }}>
-    <Typography variant="h6" sx={{ color: "#00eaff" }}>
-      Total Students: {totalStudents}
-    </Typography>
-    <Typography variant="h6" sx={{ color: "limegreen" }}>
-      Present: {presentCount}
-    </Typography>
-    <Typography variant="h6" sx={{ color: "red" }}>
-      Absent: {absentCount}
-    </Typography>
-  </div>
-)}
-
-      {isLoading ? (
-        <CircularProgress />
-      ) : selectedBranch ? (
-        <TableContainer component={Paper} sx={{ marginTop: "20px", backgroundColor: "#222", color: "white" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell onClick={() => sortData("id")}>ID</StyledTableCell>
-                <StyledTableCell onClick={() => sortData("name")}>Name</StyledTableCell>
-                <StyledTableCell align="center">Status</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {students.map((student) => (
-                <TableRow key={student.id} sx={{ backgroundColor: "#444", "&:hover": { backgroundColor: "#555" } }}>
-                  <TableCell sx={{ color: "white" }}>{student.id}</TableCell>
-                  <TableCell sx={{ color: "white" }}>{student.name}</TableCell>
-                  <TableCell align="center">
-                    <StyledButton
-                      variant="contained"
-                      color={student.present ? "success" : "error"}
-                      onClick={() => toggleAttendance(student.id)}
-                    >
-                      {student.present ? "Present" : "Absent"}
-                    </StyledButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Typography color="white">Please select a branch to view students.</Typography>
-      )}
-
-      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={() => setOpenSnackbar(false)}>
-        <Alert severity={message.type}>{message.text}</Alert>
-      </Snackbar>
-    </StyledContainer>
+      </StyledContainer>
+    </StyledMainContainer>
   );
 };
 

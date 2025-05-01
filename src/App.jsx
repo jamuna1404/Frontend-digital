@@ -1,32 +1,39 @@
-import React from 'react'
-import { useLocation } from 'react-router-dom'
-import AppRoutes from './routes'
-import Sidebar from './components/Dashboard/Sidebar'
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material'
+// App.jsx
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import AppRoutes from './routes';
+import Sidebar from './components/Dashboard/Sidebar';
+import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 
-// Define the custom colors for your theme
+// Define your theme colors
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#d8b79e',  // Light Milk Chocolate color for Sidebar
-    },
-    secondary: {
-      main: '#f3e5ab',  // Light Sandal color for Main Area
-    },
-    background: {
-      default: '#f3e5ab',  // Light Sandal color for Main Area
-    },
+    primary: { main: '#657889' },
+    secondary: { main: '#E8D9CE' },
+    background: { default: '#fefeff' },
   },
-})
+});
+
+const drawerWidth = 240;
+const collapsedWidth = 70;
 
 function App() {
-  const location = useLocation()
+  const location = useLocation();
 
-  // Routes that should hide the sidebar and have a specific background color
-  const hideSidebarRoutes = ['/', '/adminlogin', '/Forgot_password', '/stafflogin']
+  // **Manage sidebar open/closed here**
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // Check if the current route is one of the login or auth pages
-  const isAuthPage = hideSidebarRoutes.includes(location.pathname)
+  // Hide on these auth routes
+  const hideSidebarRoutes = ['/', '/adminlogin', '/Forgot_password', '/stafflogin'];
+  const isAuthPage = hideSidebarRoutes.includes(location.pathname);
+
+  // Pick actual left-offset based on sidebar state
+  const contentMarginLeft = isAuthPage
+    ? 0
+    : isSidebarOpen
+      ? drawerWidth
+      : collapsedWidth;
 
   return (
     <ThemeProvider theme={theme}>
@@ -36,29 +43,37 @@ function App() {
           display: 'flex',
           position: 'relative',
           minHeight: '100vh',
-          backgroundColor: isAuthPage ? theme.palette.background.default : '', // Apply Light Sandal background for auth pages
-          overflow: isAuthPage ? 'hidden' : '', // Hide scrollbar for auth pages
+          backgroundColor: isAuthPage ? 'transparent' : theme.palette.background.default,
+          overflow: isAuthPage ? 'hidden' : 'auto',
         }}
       >
-        {/* Conditionally render Sidebar */}
-        {!isAuthPage && <Sidebar />}
+        {/* Sidebar only on non-auth pages, and now controlled by App */}
+        {!isAuthPage && (
+          <Sidebar
+            isOpen={isSidebarOpen}
+            toggleOpen={toggleSidebar}
+            drawerWidth={drawerWidth}
+            collapsedWidth={collapsedWidth}
+          />
+        )}
 
-        {/* Main content area */}
+        {/* Main content */}
         <div
           style={{
-            marginLeft: !isAuthPage ? '240px' : '0', // Adjust margin when Sidebar is hidden
+            marginLeft: contentMarginLeft,
             padding: '20px',
             flex: 1,
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: isAuthPage ? 'transparent' : theme.palette.background.default,
+            transition: 'margin-left 0.3s ease-in-out',
             position: 'relative',
             zIndex: 1,
           }}
         >
-          <AppRoutes />
+          <AppRoutes isSidebarOpen={isSidebarOpen} />
         </div>
       </div>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Drawer, List, ListItem, ListItemIcon, ListItemText,
-  Avatar, Divider, Box, Button, IconButton, Typography, Tooltip
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Avatar,
+  Divider,
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  Tooltip
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ include useNavigate
 
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,45 +29,46 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-const drawerWidth = 240;
-const collapsedWidth = 70;
-
-const StyledDrawer = styled(Drawer)(({ open }) => ({
+const StyledDrawer = styled(Drawer)(({ theme, open, width }) => ({
   "& .MuiDrawer-paper": {
-    width: open ? drawerWidth : collapsedWidth,
-    backgroundColor: "#8B5D3B", // Darker brown shade
+    width: open ? width.drawer : width.collapsed,
+    backgroundColor: "#4F5B67",
     color: "white",
     borderRight: "2px solid rgba(255, 255, 255, 0.1)",
     transition: "width 0.3s ease-in-out",
     overflowX: "hidden",
+    position: "fixed",
   },
 }));
 
+const menuItems = [
+  { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/dashboard" },
+  { text: "Vision Mission", icon: <AssignmentIcon />, path: "/dashboard/VisionMission" },
+  { text: "PO", icon: <PersonIcon />, path: "/dashboard/POs" },
+  { text: "PSO", icon: <SchoolIcon />, path: "/dashboard/PSOs" },
+  { text: "CO", icon: <FormatListNumberedIcon />, path: "/dashboard/COs" },
+  { text: "Attendance", icon: <AssessmentIcon />, path: "/dashboard/Attendance" },
+  { text: "Assessment Methods", icon: <AssessmentIcon />, path: "/dashboard/AssessmentMethods" },
+  { text: "Grade Distribution", icon: <AssessmentIcon />, path: "/dashboard/GradeDistribution" },
+  { text: "Lecture Tracking", icon: <DescriptionIcon />, path: "/dashboard/LectureTracking" },
+  { text: "PDF Generator", icon: <PictureAsPdfIcon />, path: "/dashboard/PDFGeneration" },
+];
 
-const Sidebar = () => {
-  const [open, setOpen] = useState(true);
+const Sidebar = ({ isOpen, toggleOpen, drawerWidth, collapsedWidth }) => {
+  const widths = { drawer: drawerWidth, collapsed: collapsedWidth };
+  const navigate = useNavigate(); // ✅ useNavigate hook for redirect
 
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const handleLogout = () => {
+    // Optional: Clear any auth state if used
+    // localStorage.clear(); or sessionStorage.clear();
+    navigate("/"); // ✅ redirect to staff login
   };
-
-  const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/dashboard" },
-    { text: "Vision Mission", icon: <AssignmentIcon />, path: "/dashboard/VisionMission" },
-    { text: "PO", icon: <PersonIcon />, path: "/dashboard/POs" },
-    { text: "PSO", icon: <SchoolIcon />, path: "/dashboard/PSOs" },
-    { text: "CO", icon: <FormatListNumberedIcon />, path: "/dashboard/COs" },
-    { text: "Attendance", icon: <AssessmentIcon />, path: "/dashboard/Attendance" },
-    { text: "Assessment Methods", icon: <AssessmentIcon />, path: "/dashboard/AssessmentMethods" },
-    { text: "Grade Distribution", icon: <AssessmentIcon />, path: "/dashboard/GradeDistribution" },
-    { text: "Lecture Tracking", icon: <DescriptionIcon />, path: "/dashboard/LectureTracking" },
-    { text: "PDF Generator", icon: <PictureAsPdfIcon />, path: "/dashboard/PDFGeneration" },
-  ];
 
   return (
     <>
+      {/* Toggle button */}
       <IconButton
-        onClick={toggleDrawer}
+        onClick={toggleOpen}
         sx={{
           position: "fixed",
           top: 15,
@@ -69,15 +80,16 @@ const Sidebar = () => {
           "&:hover": { color: "#00bfff", boxShadow: "0px 0px 8px #00bfff" },
         }}
       >
-        {open ? <CloseIcon /> : <MenuIcon />}
+        {isOpen ? <CloseIcon /> : <MenuIcon />}
       </IconButton>
 
-      <StyledDrawer variant="permanent" open={open}>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 2, mt: 5 }}>
-          <Avatar sx={{ width: open ? 64 : 40, height: open ? 64 : 40, bgcolor: "#222" }}>
+      {/* Sidebar Drawer */}
+      <StyledDrawer variant="permanent" open={isOpen} width={widths}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 2, mt: 8 }}>
+          <Avatar sx={{ width: isOpen ? 64 : 40, height: isOpen ? 64 : 40, bgcolor: "#222" }}>
             <AccountCircleIcon sx={{ width: "100%", height: "100%" }} />
           </Avatar>
-          {open && (
+          {isOpen && (
             <Typography variant="h6" sx={{ mt: 1, color: "white" }}>
               Staff
             </Typography>
@@ -88,23 +100,20 @@ const Sidebar = () => {
 
         <List sx={{ mt: 1 }}>
           {menuItems.map(({ text, icon, path }) => (
-            <Tooltip title={!open ? text : ""} placement="right" key={text}>
+            <Tooltip key={text} title={!isOpen ? text : ""} placement="right">
               <ListItem
-                button
                 component={Link}
                 to={path}
+                button
                 sx={{
-                  backgroundColor: "transparent",
                   transition: "0.3s ease-in-out",
-                  "&:hover": { backgroundColor: "#111", boxShadow: "0px 0px 8px #00bfff" },
+                  "&:hover": { backgroundColor: "#4f3b31" },
                 }}
               >
-                <ListItemIcon sx={{ color: "white", transition: "0.3s", "&:hover": { color: "#00bfff" } }}>
+                <ListItemIcon sx={{ color: "white", minWidth: 0, mr: isOpen ? 3 : 'auto', justifyContent: "center" }}>
                   {icon}
                 </ListItemIcon>
-                {open && (
-                  <ListItemText primary={text} sx={{ "& .MuiTypography-root": { color: "white" } }} />
-                )}
+                {isOpen && <ListItemText primary={text} sx={{ color: "white" }} />}
               </ListItem>
             </Tooltip>
           ))}
@@ -112,20 +121,21 @@ const Sidebar = () => {
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }} />
 
-        <Box sx={{ p: 2, textAlign: "center" }}>
+        <Box sx={{ p: 2, textAlign: "center", mt: "auto" }}>
           <Button
             variant="contained"
+            startIcon={<ExitToAppIcon />}
             sx={{
               backgroundColor: "#222",
               color: "white",
               fontWeight: "bold",
-              transition: "0.3s ease-in-out",
-              width: open ? "100%" : "auto",
+              width: isOpen ? "100%" : "auto",
+              transition: "0.3s",
               "&:hover": { backgroundColor: "#00bfff", boxShadow: "0px 0px 8px #00bfff" },
             }}
-            startIcon={<ExitToAppIcon />}
+            onClick={handleLogout}
           >
-            {open ? "Logout" : ""}
+            {isOpen && "Logout"}
           </Button>
         </Box>
       </StyledDrawer>

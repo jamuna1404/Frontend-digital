@@ -143,13 +143,11 @@ const PSOs = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => deleteRow(row.id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton onClick={addRow} color="primary">
-                    <AddCircleIcon />
-                  </IconButton>
-                </TableCell>
+  <IconButton onClick={addRow} color="primary">
+    <AddCircleIcon />
+  </IconButton>
+</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
